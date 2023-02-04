@@ -8,19 +8,10 @@ namespace Flights.Controllers
     [Route("[controller]")]
     public class FlightController : ControllerBase
     {
-        
-
-        private readonly ILogger<FlightController> _logger;
-
-        public FlightController(ILogger<FlightController> logger)
+        static Random random = new Random();
+        static private FlightRm[] flightRm = new FlightRm[]
         {
-            _logger = logger;
-        }
-        Random random = new Random();
-        [HttpGet]
-        public IEnumerable<FlightRm> Search()
-            => new FlightRm[]
-            {
+
                     new (   Guid.NewGuid(),
                 "American Airlines",
                 random.Next(90, 5000).ToString(),
@@ -69,6 +60,36 @@ namespace Flights.Controllers
                 new TimePlaceRm("Le Bourget",DateTime.Now.AddHours(random.Next(1, 58))),
                 new TimePlaceRm("Zagreb",DateTime.Now.AddHours(random.Next(4, 60))),
                     random.Next(1, 853))
-            };
+         };  
+    
+        private readonly ILogger<FlightController> _logger;
+
+        public FlightController(ILogger<FlightController> logger)
+        {
+            _logger = logger;
+        }
+
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(IEnumerable<FlightRm>), 200)]
+        [HttpGet]
+        public IEnumerable<FlightRm> Search()
+            => flightRm;
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(FlightRm), 200)]
+        [HttpGet("{id}")]
+        public ActionResult<FlightRm> Find(Guid id)
+        {
+             var fRm = flightRm.SingleOrDefault(e => e.Id == id);
+
+            if (fRm == null)
+                return NotFound();
+
+            return Ok(fRm);
+        }
+           
     }
 }
