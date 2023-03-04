@@ -18,6 +18,8 @@ export class BookFlightComponent implements OnInit {
   flightId: string = 'not loaded'
   flight: FlightRm = {}
 
+
+
   ngOnInit(): void {
     this.route.paramMap
       .subscribe(p => this.findFlight(p.get("flightId")))
@@ -41,4 +43,5 @@ export class BookFlightComponent implements OnInit {
     console.log("Response Error Status Text: ", err.statusText)
     console.log(err)
   }
+
 }
